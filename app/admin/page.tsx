@@ -1,276 +1,200 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-export default function AdminDashboard() {
-  const [activeMenu, setActiveMenu] = useState('dashboard')
+interface Article {
+  title: string
+  slug: string
+  university: string
+  country: string
+  field: string
+  level: string
+  funding: string
+  deadline: string
+  metaDescription: string
+  wordCount: number
+}
 
-  const kpis = [
-    { icon: '👁️', label: 'Page Views Today', value: '48,291', trend: '+24%', up: true, color: '#e8f5ee' },
-    { icon: '👤', label: 'Unique Visitors', value: '12,450', trend: '+18%', up: true, color: '#dbeafe' },
-    { icon: '💰', label: 'AdSense Today', value: '$842', trend: '+31%', up: true, color: '#fef9c3' },
-    { icon: '🎓', label: 'Active Scholarships', value: '1,248', trend: '+8%', up: true, color: '#ede9fe' },
-  ]
+export default function Home() {
+  const [articles, setArticles] = useState<Article[]>([])
 
-  const menuItems = [
-    { id: 'dashboard', icon: '📊', label: 'Dashboard' },
-    { id: 'scholarships', icon: '🎓', label: 'Scholarships' },
-    { id: 'posts', icon: '📝', label: 'Blog Posts' },
-    { id: 'users', icon: '👥', label: 'Users' },
-    { id: 'forum', icon: '💬', label: 'Forum' },
-    { id: 'automation', icon: '🤖', label: 'Auto Content' },
-    { id: 'adsense', icon: '💰', label: 'AdSense' },
-    { id: 'analytics', icon: '📈', label: 'Analytics' },
-    { id: 'settings', icon: '⚙️', label: 'Settings' },
-  ]
-
-  const recentPosts = [
-    { title: 'DAAD Scholarship Complete Guide 2025', status: 'Published', views: '2,341', date: 'Today' },
-    { title: 'Chevening Africa Full Application Guide', status: 'Published', views: '1,892', date: 'Today' },
-    { title: 'Top 10 China Scholarships for Africans', status: 'Published', views: '3,120', date: 'Yesterday' },
-    { title: 'MasterCard Foundation Scholarship 2025', status: 'Draft', views: '—', date: 'Yesterday' },
-    { title: 'Erasmus+ Programme for African Students', status: 'Pending', views: '—', date: '2 days ago' },
-  ]
-
-  const countries = [
-    { flag: '🇹🇿', name: 'Tanzania', pct: 72, visitors: '52K' },
-    { flag: '🇰🇪', name: 'Kenya', pct: 55, visitors: '40K' },
-    { flag: '🇳🇬', name: 'Nigeria', pct: 45, visitors: '33K' },
-    { flag: '🇬🇭', name: 'Ghana', pct: 35, visitors: '25K' },
-    { flag: '🇺🇬', name: 'Uganda', pct: 25, visitors: '18K' },
-  ]
-
-  const autoItems = [
-    { name: 'Content Generator', time: 'Last: Today 7:00 AM · 12 posts', on: true },
-    { name: 'RSS Fetcher', time: 'Last: Today 6:30 AM · 48 items', on: true },
-    { name: 'Sitemap Updater', time: 'Last: Today 8:00 AM', on: true },
-    { name: 'Google Ping', time: 'Last: Today 8:01 AM · 12 URLs', on: true },
-    { name: 'Expired Cleanup', time: 'Last: 2 days ago · 3 pending', on: false },
-  ]
-
-  const statusColor: Record<string, { bg: string; color: string }> = {
-    Published: { bg: '#e8f5ee', color: '#1a6b3c' },
-    Draft: { bg: '#fff8e6', color: '#b07d00' },
-    Pending: { bg: '#fde8e8', color: '#c0392b' },
-  }
+  useEffect(() => {
+    fetch('/api/generate-content')
+      .then(res => res.json())
+      .then(data => setArticles(data.articles?.slice(0, 3) || []))
+      .catch(() => {})
+  }, [])
 
   return (
-    <div style={{ fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <main style={{ fontFamily: 'sans-serif', margin: 0, padding: 0 }}>
 
-      {/* TOP NAV */}
-      <div style={{ height: '60px', background: '#0d1f14', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', position: 'sticky', top: 0, zIndex: 100 }}>
+      {/* NAVBAR */}
+      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: '64px', background: '#fff', borderBottom: '1px solid #e0ece4', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 2px 12px rgba(26,107,60,0.07)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg,#1a6b3c,#2d9e5f)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>🎓</div>
-          <span style={{ fontFamily: 'Georgia,serif', fontSize: '15px', fontWeight: 700, color: '#fff' }}>World<span style={{ color: '#c9a84c' }}>Scholarships</span>Africa <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px', fontFamily: 'sans-serif', fontWeight: 400 }}>/ Admin</span></span>
+          <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #1a6b3c, #2d9e5f)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>🎓</div>
+          <span style={{ fontFamily: 'Georgia, serif', fontSize: '17px', fontWeight: 700, color: '#1a6b3c' }}>World<span style={{ color: '#c9a84c' }}>Scholarships</span>Africa</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px' }}>🔔</span>
-          <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px' }}>👤 Admin</span>
-          <a href="/" style={{ color: '#c9a84c', fontSize: '12px', textDecoration: 'none' }}>← View Site</a>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {[['Scholarships', '/scholarships'], ['Forum', '/forum'], ['Blog', '/blog'], ['Login', '/login']].map(([item, href]) => (
+            <a key={item} href={href} style={{ padding: '7px 13px', borderRadius: '8px', textDecoration: 'none', color: '#6b8a72', fontSize: '13px', fontWeight: 500 }}>{item}</a>
+          ))}
         </div>
-      </div>
+        <a href="/login" style={{ padding: '8px 16px', borderRadius: '8px', background: '#1a6b3c', color: '#fff', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}>Sign in with Google</a>
+      </nav>
 
-      <div style={{ display: 'flex', flex: 1 }}>
+      {/* HERO */}
+      <section style={{ background: 'linear-gradient(135deg, #0d1f14 0%, #0f3320 50%, #1a5c35 100%)', padding: '80px 40px', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ maxWidth: '700px', textAlign: 'center' }}>
+          <div style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.4)', borderRadius: '100px', color: '#f0d080', fontSize: '12px', fontWeight: 600, marginBottom: '20px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>Africa&apos;s #1 Scholarship Platform</div>
+          <h1 style={{ fontFamily: 'Georgia, serif', fontSize: '48px', fontWeight: 900, color: '#fff', lineHeight: 1.1, marginBottom: '20px' }}>Find Your <em style={{ color: '#f0d080' }}>Dream</em> Scholarship Worldwide</h1>
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '16px', lineHeight: 1.7, marginBottom: '32px' }}>Discover thousands of fully funded scholarships for African students from top universities across the USA, UK, China, Germany and beyond.</p>
+          <div style={{ display: 'flex', background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,0.3)' }}>
+            <select style={{ padding: '14px 16px', border: 'none', outline: 'none', fontSize: '13px', color: '#6b8a72', background: '#f8faf9', borderRight: '1px solid #e0ece4', minWidth: '130px' }}>
+              <option>All Fields</option>
+              <option>Medicine</option>
+              <option>Engineering</option>
+              <option>Business</option>
+            </select>
+            <input type="text" placeholder="Search scholarships, universities..." style={{ flex: 1, padding: '14px 16px', border: 'none', outline: 'none', fontSize: '14px' }} />
+            <button style={{ padding: '14px 24px', background: '#1a6b3c', border: 'none', color: '#fff', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}>Search</button>
+          </div>
+          <div style={{ display: 'flex', gap: '32px', marginTop: '28px', justifyContent: 'center' }}>
+            {[['1,200+', 'Active Scholarships'], ['85+', 'Countries'], ['50K+', 'Students Helped']].map(([num, label]) => (
+              <div key={label} style={{ textAlign: 'center' }}>
+                <div style={{ fontFamily: 'Georgia, serif', fontSize: '28px', fontWeight: 700, color: '#f0d080' }}>{num}</div>
+                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginTop: '2px' }}>{label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        {/* SIDEBAR */}
-        <div style={{ width: '220px', background: '#0d1f14', padding: '16px 0', flexShrink: 0 }}>
-          {menuItems.map(item => (
-            <div
-              key={item.id}
-              onClick={() => setActiveMenu(item.id)}
-              style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '11px 20px', color: activeMenu === item.id ? '#fff' : 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: 500, cursor: 'pointer', background: activeMenu === item.id ? 'rgba(45,158,95,0.15)' : 'transparent', borderLeft: activeMenu === item.id ? '3px solid #2d9e5f' : '3px solid transparent' }}
-            >
-              <span style={{ fontSize: '15px' }}>{item.icon}</span>
-              {item.label}
+      {/* CATEGORIES */}
+      <section style={{ padding: '60px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+        <h2 style={{ fontFamily: 'Georgia, serif', fontSize: '32px', fontWeight: 700, marginBottom: '8px', color: '#1a2e1f' }}>Browse by <span style={{ color: '#1a6b3c' }}>Field of Study</span></h2>
+        <p style={{ color: '#6b8a72', marginBottom: '28px', fontSize: '14px' }}>Find scholarships tailored to your academic interest</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '16px' }}>
+          {[['🏥', 'Medicine', '245'], ['⚙️', 'Engineering', '312'], ['💼', 'Business', '198'], ['💻', 'Technology', '267'], ['🎨', 'Arts', '143'], ['⚖️', 'Law', '89']].map(([icon, name, count]) => (
+            <a href="/scholarships" key={name} style={{ background: '#f4f7f5', borderRadius: '14px', padding: '20px 14px', textAlign: 'center', cursor: 'pointer', border: '2px solid transparent', textDecoration: 'none', display: 'block' }}>
+              <div style={{ fontSize: '28px', marginBottom: '10px' }}>{icon}</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#1a2e1f', marginBottom: '4px' }}>{name}</div>
+              <div style={{ fontSize: '11px', color: '#6b8a72' }}>{count} scholarships</div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* LATEST SCHOLARSHIPS */}
+      <section style={{ background: '#f4f7f5', padding: '60px 40px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '28px' }}>
+            <div>
+              <h2 style={{ fontFamily: 'Georgia, serif', fontSize: '32px', fontWeight: 700, color: '#1a2e1f' }}>Latest <span style={{ color: '#1a6b3c' }}>Scholarships</span></h2>
+              <p style={{ color: '#6b8a72', fontSize: '14px', marginTop: '4px' }}>Updated daily — auto-fetched from top universities worldwide</p>
+            </div>
+            <a href="/scholarships" style={{ color: '#1a6b3c', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}>View All →</a>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+            {[
+              { logo: '🏛️', uni: 'Harvard University', country: '🇺🇸 USA', title: 'Harvard Africa Leaders Fellowship 2025', tags: ['Masters', 'Leadership', 'All Africa'], deadline: 'Dec 30, 2025', bg: '#e8f0fb' },
+              { logo: '🎓', uni: 'University of Oxford', country: '🇬🇧 UK', title: 'Chevening Scholarship for African Students', tags: ['Masters', 'Any Field', 'East Africa'], deadline: 'Jan 15, 2026', bg: '#f0e8fb' },
+              { logo: '🌏', uni: 'Chinese Govt (CSC)', country: '🇨🇳 China', title: 'CSC Scholarship for African Students 2025', tags: ['All Levels', 'Engineering', 'All Africa'], deadline: 'Feb 28, 2026', bg: '#fbe8e8' },
+            ].map((s) => (
+              <div key={s.title} style={{ background: '#fff', borderRadius: '16px', overflow: 'hidden', border: '1px solid #e8f0eb' }}>
+                <div style={{ padding: '20px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>{s.logo}</div>
+                    <div>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#1a2e1f' }}>{s.uni}</div>
+                      <div style={{ fontSize: '11px', color: '#6b8a72', marginTop: '2px' }}>{s.country}</div>
+                    </div>
+                  </div>
+                  <span style={{ padding: '4px 10px', borderRadius: '100px', fontSize: '10px', fontWeight: 700, background: '#e8f5ee', color: '#1a6b3c' }}>Fully Funded</span>
+                </div>
+                <div style={{ height: '1px', background: '#f0f4f1', margin: '0 20px' }}></div>
+                <div style={{ padding: '16px 20px' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 600, color: '#1a2e1f', lineHeight: 1.4, marginBottom: '10px' }}>{s.title}</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '6px' }}>
+                    {s.tags.map(tag => (<span key={tag} style={{ padding: '3px 10px', background: '#f4f7f5', borderRadius: '100px', fontSize: '11px', color: '#6b8a72' }}>{tag}</span>))}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderTop: '1px solid #f0f4f1' }}>
+                  <div style={{ fontSize: '12px', color: '#6b8a72' }}>Deadline: <strong style={{ color: '#e05c2a' }}>{s.deadline}</strong></div>
+                  <a href="/scholarships" style={{ padding: '8px 18px', background: '#1a6b3c', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', textDecoration: 'none' }}>Apply Now</a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* LATEST BLOG POSTS */}
+      <section style={{ padding: '60px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '28px' }}>
+          <div>
+            <h2 style={{ fontFamily: 'Georgia, serif', fontSize: '32px', fontWeight: 700, color: '#1a2e1f' }}>Latest <span style={{ color: '#1a6b3c' }}>Blog Posts</span></h2>
+            <p style={{ color: '#6b8a72', fontSize: '14px', marginTop: '4px' }}>Complete guides and tips — auto-generated daily</p>
+          </div>
+          <a href="/blog" style={{ color: '#1a6b3c', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}>View All Posts →</a>
+        </div>
+
+        {articles.length === 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '24px' }}>
+            {[1,2,3].map(i => (
+              <div key={i} style={{ background: '#f4f7f5', borderRadius: '16px', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ color: '#6b8a72', fontSize: '13px' }}>Loading posts...</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '24px' }}>
+            {articles.map(article => (
+              <a key={article.slug} href="/blog" style={{ textDecoration: 'none', display: 'block' }}>
+                <div style={{ background: '#fff', borderRadius: '16px', overflow: 'hidden', border: '1px solid #e0ece4', cursor: 'pointer', height: '100%' }}>
+                  <div style={{ background: 'linear-gradient(135deg,#0d1f14,#1a5c35)', padding: '20px' }}>
+                    <div style={{ display: 'flex', gap: '6px', marginBottom: '10px' }}>
+                      <span style={{ padding: '3px 10px', borderRadius: '100px', fontSize: '10px', fontWeight: 700, background: '#e8f5ee', color: '#1a6b3c' }}>{article.funding}</span>
+                      <span style={{ padding: '3px 10px', borderRadius: '100px', fontSize: '10px', fontWeight: 700, background: 'rgba(255,255,255,0.15)', color: '#fff' }}>{article.country}</span>
+                    </div>
+                    <h3 style={{ fontFamily: 'Georgia,serif', fontSize: '15px', fontWeight: 700, color: '#fff', lineHeight: 1.4 }}>{article.title.split('—')[0]}</h3>
+                  </div>
+                  <div style={{ padding: '16px 20px' }}>
+                    <p style={{ fontSize: '13px', color: '#6b8a72', lineHeight: 1.6, marginBottom: '14px' }}>{article.metaDescription.substring(0, 100)}...</p>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '11px', color: '#6b8a72' }}>📖 {article.wordCount} words</span>
+                      <span style={{ fontSize: '12px', color: '#1a6b3c', fontWeight: 600 }}>Read More →</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* STATS */}
+      <section style={{ background: 'linear-gradient(135deg, #1a6b3c, #0f4a28)', padding: '50px 40px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '20px', textAlign: 'center' }}>
+          {[['1,200+', 'Active Scholarships'], ['85+', 'Partner Universities'], ['54', 'African Countries'], ['50K+', 'Students Helped']].map(([num, label]) => (
+            <div key={label}>
+              <div style={{ fontFamily: 'Georgia, serif', fontSize: '42px', fontWeight: 900, color: '#f0d080' }}>{num}</div>
+              <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginTop: '4px' }}>{label}</div>
             </div>
           ))}
         </div>
+      </section>
 
-        {/* MAIN */}
-        <div style={{ flex: 1, background: '#f4f7f5', padding: '24px', overflowY: 'auto' }}>
-
-          {/* HEADER */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-            <div>
-              <h1 style={{ fontFamily: 'Georgia,serif', fontSize: '24px', fontWeight: 700, color: '#1a2e1f' }}>📊 Dashboard Overview</h1>
-              <p style={{ fontSize: '12px', color: '#6b8a72', marginTop: '4px' }}>WorldScholarshipsAfrica.com — Live Data</p>
-            </div>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button style={{ padding: '9px 18px', background: '#fff', color: '#1a2e1f', border: '1.5px solid #e0ece4', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>📥 Export</button>
-              <button style={{ padding: '9px 18px', background: '#1a6b3c', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>🤖 Run Automation</button>
-            </div>
-          </div>
-
-          {/* DATE RANGE */}
-          <div style={{ display: 'flex', gap: '6px', marginBottom: '20px' }}>
-            {['Today', '7 Days', '30 Days', '3 Months'].map((d, i) => (
-              <button key={d} style={{ padding: '7px 14px', borderRadius: '8px', border: '1.5px solid #e0ece4', background: i === 1 ? '#1a6b3c' : '#fff', color: i === 1 ? '#fff' : '#6b8a72', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>{d}</button>
-            ))}
-          </div>
-
-          {/* KPI CARDS */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '16px', marginBottom: '20px' }}>
-            {kpis.map(k => (
-              <div key={k.label} style={{ background: '#fff', borderRadius: '14px', padding: '20px', border: '1px solid #e0ece4' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: '11px', background: k.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>{k.icon}</div>
-                  <span style={{ fontSize: '12px', fontWeight: 700, padding: '4px 8px', borderRadius: '100px', background: '#e8f5ee', color: '#1a6b3c' }}>{k.trend}</span>
-                </div>
-                <div style={{ fontFamily: 'Georgia,serif', fontSize: '28px', fontWeight: 900, color: '#1a2e1f' }}>{k.value}</div>
-                <div style={{ fontSize: '12px', color: '#6b8a72', marginTop: '4px' }}>{k.label}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* CHARTS ROW */}
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px', marginBottom: '20px' }}>
-
-            {/* Traffic Chart */}
-            <div style={{ background: '#fff', borderRadius: '14px', padding: '22px', border: '1px solid #e0ece4' }}>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: '#1a2e1f', marginBottom: '16px' }}>Traffic This Week</div>
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', height: '140px' }}>
-                {[['Mon', '65', '28K'], ['Tue', '80', '35K'], ['Wed', '72', '31K'], ['Thu', '95', '42K'], ['Fri', '100', '48K'], ['Sat', '30', '—'], ['Sun', '20', '—']].map(([day, h, val]) => (
-                  <div key={day} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontSize: '9px', color: '#1a6b3c', fontWeight: 700 }}>{val}</span>
-                    <div style={{ width: '100%', height: `${h}%`, borderRadius: '5px 5px 0 0', background: day === 'Fri' ? 'linear-gradient(180deg,#f0d080,#c9a84c)' : 'linear-gradient(180deg,#2d9e5f,#1a6b3c)', minHeight: '4px' }}></div>
-                    <span style={{ fontSize: '9px', color: '#6b8a72' }}>{day}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Traffic Sources */}
-            <div style={{ background: '#fff', borderRadius: '14px', padding: '22px', border: '1px solid #e0ece4' }}>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: '#1a2e1f', marginBottom: '16px' }}>Traffic Sources</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {[['🔍', 'Google', 68, '#1a6b3c'], ['👥', 'Facebook', 14, '#3b82f6'], ['🔗', 'Direct', 10, '#c9a84c'], ['💬', 'WhatsApp', 5, '#25D366'], ['𝕏', 'Twitter', 3, '#000']].map(([icon, name, pct, color]) => (
-                  <div key={name as string} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ fontSize: '14px', width: '20px' }}>{icon}</span>
-                    <span style={{ fontSize: '12px', color: '#1a2e1f', fontWeight: 500, width: '65px' }}>{name}</span>
-                    <div style={{ flex: 1, height: '6px', background: '#f4f7f5', borderRadius: '100px', overflow: 'hidden' }}>
-                      <div style={{ width: `${pct}%`, height: '100%', background: color as string, borderRadius: '100px' }}></div>
-                    </div>
-                    <span style={{ fontSize: '12px', color: '#6b8a72', width: '30px', textAlign: 'right' }}>{pct}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* SECOND ROW */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-
-            {/* Recent Posts */}
-            <div style={{ background: '#fff', borderRadius: '14px', padding: '22px', border: '1px solid #e0ece4' }}>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: '#1a2e1f', marginBottom: '16px' }}>Recent Auto-Generated Posts</div>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr>
-                    {['Title', 'Status', 'Views', 'Date'].map(h => (
-                      <th key={h} style={{ fontSize: '10px', fontWeight: 700, color: '#6b8a72', textTransform: 'uppercase', padding: '6px 8px', textAlign: 'left', borderBottom: '1px solid #e0ece4' }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentPosts.map(post => (
-                    <tr key={post.title}>
-                      <td style={{ fontSize: '11px', color: '#1a2e1f', padding: '8px', borderBottom: '1px solid #f4f7f5', maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.title}</td>
-                      <td style={{ padding: '8px', borderBottom: '1px solid #f4f7f5' }}>
-                        <span style={{ padding: '2px 8px', borderRadius: '100px', fontSize: '10px', fontWeight: 700, background: statusColor[post.status].bg, color: statusColor[post.status].color }}>{post.status}</span>
-                      </td>
-                      <td style={{ fontSize: '11px', color: '#1a2e1f', padding: '8px', borderBottom: '1px solid #f4f7f5' }}>{post.views}</td>
-                      <td style={{ fontSize: '11px', color: '#6b8a72', padding: '8px', borderBottom: '1px solid #f4f7f5' }}>{post.date}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Top Countries */}
-            <div style={{ background: '#fff', borderRadius: '14px', padding: '22px', border: '1px solid #e0ece4' }}>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: '#1a2e1f', marginBottom: '16px' }}>🌍 Top Countries</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {countries.map(c => (
-                  <div key={c.name} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '18px', width: '24px' }}>{c.flag}</span>
-                    <span style={{ fontSize: '12px', color: '#1a2e1f', fontWeight: 500, width: '65px' }}>{c.name}</span>
-                    <div style={{ flex: 1, height: '6px', background: '#f4f7f5', borderRadius: '100px', overflow: 'hidden' }}>
-                      <div style={{ width: `${c.pct}%`, height: '100%', background: 'linear-gradient(90deg,#1a6b3c,#2d9e5f)', borderRadius: '100px' }}></div>
-                    </div>
-                    <span style={{ fontSize: '11px', color: '#6b8a72', width: '30px', textAlign: 'right' }}>{c.pct}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Automation */}
-            <div style={{ background: '#fff', borderRadius: '14px', padding: '22px', border: '1px solid #e0ece4' }}>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: '#1a2e1f', marginBottom: '16px' }}>🤖 Automation Status</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {autoItems.map(item => (
-                  <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: '#f4f7f5', borderRadius: '10px' }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.on ? '#2ecc71' : '#e74c3c', flexShrink: 0, boxShadow: item.on ? '0 0 6px rgba(46,204,113,0.6)' : 'none' }}></div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '12px', fontWeight: 600, color: '#1a2e1f' }}>{item.name}</div>
-                      <div style={{ fontSize: '10px', color: '#6b8a72', marginTop: '1px' }}>{item.time}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* THIRD ROW */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
-
-            {/* AdSense */}
-            <div style={{ background: '#fff', borderRadius: '14px', padding: '22px', border: '1px solid #e0ece4' }}>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: '#1a2e1f', marginBottom: '8px' }}>💰 AdSense Revenue</div>
-              <div style={{ fontFamily: 'Georgia,serif', fontSize: '40px', fontWeight: 900, color: '#1a6b3c', textAlign: 'center', margin: '8px 0 4px' }}>$18,420</div>
-              <div style={{ fontSize: '11px', color: '#6b8a72', textAlign: 'center', marginBottom: '16px' }}>This month</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                {[['$842', 'Today'], ['$5,842', 'This Week'], ['3.6%', 'CTR'], ['284K', 'Impressions']].map(([val, label]) => (
-                  <div key={label} style={{ background: '#f4f7f5', borderRadius: '10px', padding: '10px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '18px', fontWeight: 700, color: '#1a2e1f' }}>{val}</div>
-                    <div style={{ fontSize: '10px', color: '#6b8a72', marginTop: '2px' }}>{label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Users */}
-            <div style={{ background: '#fff', borderRadius: '14px', padding: '22px', border: '1px solid #e0ece4' }}>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: '#1a2e1f', marginBottom: '8px' }}>👥 Users</div>
-              <div style={{ fontFamily: 'Georgia,serif', fontSize: '40px', fontWeight: 900, color: '#1a2e1f', textAlign: 'center', margin: '8px 0 4px' }}>5,420</div>
-              <div style={{ fontSize: '11px', color: '#6b8a72', textAlign: 'center', marginBottom: '16px' }}>Total registered</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {[['👨🏾', 'John Mwanga', 'Joined', '2m ago'], ['👩🏿', 'Amina Osei', 'Posted', '8m ago'], ['👨🏽', 'David Mkwawa', 'Saved ⭐', '15m ago']].map(([av, name, action, time]) => (
-                  <div key={name as string} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '7px 10px', background: '#f4f7f5', borderRadius: '8px' }}>
-                    <span style={{ fontSize: '16px' }}>{av}</span>
-                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#1a2e1f', flex: 1 }}>{name}</span>
-                    <span style={{ fontSize: '10px', color: '#6b8a72' }}>{action}</span>
-                    <span style={{ fontSize: '10px', color: '#6b8a72' }}>{time}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* SEO */}
-            <div style={{ background: '#fff', borderRadius: '14px', padding: '22px', border: '1px solid #e0ece4' }}>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: '#1a2e1f', marginBottom: '16px' }}>🔍 SEO Health</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {[['⚡', 'Page Speed', '98/100', '#1a6b3c'], ['📱', 'Mobile Score', '96/100', '#1a6b3c'], ['🗺️', 'Indexed Pages', '4,821', '#1a6b3c'], ['🔗', 'Broken Links', '3 ⚠️', '#f39c12'], ['📊', 'Keywords Ranking', '142', '#1a6b3c']].map(([icon, name, val, color]) => (
-                  <div key={name as string} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', background: '#f4f7f5', borderRadius: '8px' }}>
-                    <span style={{ fontSize: '16px' }}>{icon}</span>
-                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#1a2e1f', flex: 1 }}>{name}</span>
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: color as string }}>{val}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
+      {/* FOOTER */}
+      <footer style={{ background: '#0d1f14', color: 'rgba(255,255,255,0.6)', padding: '40px', textAlign: 'center' }}>
+        <div style={{ fontFamily: 'Georgia, serif', fontSize: '18px', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>🎓 World<span style={{ color: '#c9a84c' }}>Scholarships</span>Africa</div>
+        <p style={{ fontSize: '13px', marginBottom: '16px' }}>Africa&apos;s most comprehensive scholarship platform</p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginBottom: '16px' }}>
+          {[['Scholarships', '/scholarships'], ['Blog', '/blog'], ['Forum', '/forum'], ['Login', '/login'], ['Admin', '/admin']].map(([label, href]) => (
+            <a key={label} href={href} style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', textDecoration: 'none' }}>{label}</a>
+          ))}
         </div>
-      </div>
-    </div>
+        <p style={{ fontSize: '12px' }}>© 2026 WorldScholarshipsAfrica.com — All rights reserved</p>
+      </footer>
+
+    </main>
   )
 }
