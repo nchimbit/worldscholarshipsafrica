@@ -20,7 +20,7 @@ export default function Home() {
   useEffect(() => {
     fetch('/api/generate-content')
       .then(res => res.json())
-      .then(data => setArticles(data.articles?.slice(0, 3) || []))
+      .then(data => setArticles(data.articles?.slice(0, 6) || []))
       .catch(() => {})
   }, [])
 
