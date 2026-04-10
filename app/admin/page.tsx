@@ -138,7 +138,7 @@ export default function Home() {
         </div>
 
         {articles.length === 0 ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '24px' }}>
+          <div style={{ display: 'grid', git, gap: '24px' }}>
             {[1,2,3].map(i => (
               <div key={i} style={{ background: '#f4f7f5', borderRadius: '16px', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <span style={{ color: '#6b8a72', fontSize: '13px' }}>Loading posts...</span>
