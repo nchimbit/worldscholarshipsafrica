@@ -248,4 +248,3 @@ export default function BlogPage() {
     </main>
   )
 }
-git add .
