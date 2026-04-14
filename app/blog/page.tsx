@@ -86,7 +86,7 @@ export default function BlogPage() {
               <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' as const }}>
                 <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>🏛️ {selected.university}</span>
                 <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>📅 Deadline: {selected.deadline}</span>
-                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>📅 Published: {today}</span>
+                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>📅 📅 Published: {new Date(selected.generatedAt).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} </span>
               </div>
             </div>
 
