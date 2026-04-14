@@ -39,7 +39,7 @@ export default function BlogPage() {
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 
   useEffect(() => {
-    fetch('/api/generate-content')
+    fetch('/api/blog-posts')
       .then(res => res.json())
       .then(data => {
         const allArticles = [...(data.articles || []), ...EXTRA_SCHOLARSHIPS]
