@@ -1,15 +1,11 @@
 import { NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
 export async function GET() {
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-    if (!supabaseUrl || !supabaseKey) {
-      return NextResponse.json({ success: false, error: 'Database not configured' })
-    }
-
-    const { createClient } = await import('@supabase/supabase-js')
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     const { data, error } = await supabase
@@ -17,9 +13,11 @@ export async function GET() {
       .select('*')
       .order('created_at', { ascending: false })
 
-    if (error) throw error
+    if (error) {
+      return NextResponse.json({ success: false, error: error.message })
+    }
 
-    const articles = data.map(post => ({
+    const articles = (data || []).map(post => ({
       title: post.title,
       slug: post.slug,
       content: post.content || '',
