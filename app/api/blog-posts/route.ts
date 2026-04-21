@@ -1,49 +1,11 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
+export const dynamic = 'force-dynamic'
 export async function GET() {
-  try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      return NextResponse.json({ success: false, error: error.message })
-    }
-
-    const articles = (data || []).map(post => ({
-      title: post.title,
-      slug: post.slug,
-      content: post.content || '',
-      university: post.university,
-      country: post.country,
-      field: post.field,
-      level: post.level,
-      funding: post.funding,
-      deadline: post.deadline,
-      link: post.link || '#',
-      wordCount: post.word_count || 900,
-      generatedAt: post.created_at,
-      metaTitle: post.meta_title || post.title,
-      metaDescription: post.meta_description || '',
-      status: post.status,
-    }))
-
-    return NextResponse.json({
-      success: true,
-      total: articles.length,
-      articles,
-    })
-  } catch (error) {
-    return NextResponse.json(
-      { success: false, error: String(error) },
-      { status: 500 }
-    )
-  }
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) return NextResponse.json({ success: false, error: 'Missing env vars' })
+  const res = await fetch(`${url}/rest/v1/blog_posts?select=*&order=created_at.desc`, { headers: { 'apikey': key, 'Authorization': `Bearer ${key}` }, cache: 'no-store' })
+  const data = await res.json()
+  const articles = data.map((p: Record<string, string | number>) => ({ title: p.title, slug: p.slug, content: p.content || '', university: p.university, country: p.country, field: p.field, level: p.level, funding: p.funding, deadline: p.deadline, link: p.link || '#', wordCount: p.word_count || 900, generatedAt: p.created_at, metaTitle: p.meta_title || p.title, metaDescription: p.meta_description || '', status: p.status }))
+  return NextResponse.json({ success: true, total: articles.length, articles })
 }
