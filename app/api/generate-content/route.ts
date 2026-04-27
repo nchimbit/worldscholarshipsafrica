@@ -14,7 +14,7 @@ const SCHOLARSHIPS = [
 ]
 
 function generateArticle(scholarship: typeof SCHOLARSHIPS[0], index: number) {
-  const slug = scholarship.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now() + '-' + index
+  const slug = scholarship.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
   const content = `# ${scholarship.title} ${new Date().getFullYear()} — Complete Application Guide
 
 ## Overview
@@ -113,7 +113,7 @@ export async function POST() {
           'apikey': key,
           'Authorization': `Bearer ${key}`,
           'Content-Type': 'application/json',
-          'Prefer': 'return=representation',
+          'Prefer': 'resolution=ignore-duplicates,return=representation',
         },
         body: JSON.stringify(articles),
       }
@@ -121,18 +121,14 @@ export async function POST() {
 
     if (!response.ok) {
       const err = await response.text()
-      return NextResponse.json({
-        success: false,
-        error: err,
-        savedToDatabase: false,
-      })
+      return NextResponse.json({ success: false, error: err, savedToDatabase: false })
     }
 
     const saved = await response.json()
 
     return NextResponse.json({
       success: true,
-      message: `Successfully saved ${saved.length} articles to database!`,
+      message: `Successfully saved ${saved.length} new articles to database!`,
       articles: saved,
       savedToDatabase: true,
       total: saved.length,
